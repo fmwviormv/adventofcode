@@ -1,5 +1,5 @@
 CFLAGS = -pipe -O2 -std=c99 -pedantic -Wall -Wextra -Werror
-$.ALL := $.1 $.2 $.3 $.4 $.5 $.6 $.7
+$.ALL := $.1 $.2 $.3 $.4 $.5 $.6 $.7 $.8 $.9 $.10 $.11 $.12 $.13
 
 T := $($.ALL)
 all: $(T:=.build)
@@ -101,3 +101,72 @@ $.7.build: $.7
 $.7.runtest: $.7.build
 	R=$$(echo -e '7 LSHIFT b -> a\n1 -> b' | ./$(@:.runtest=))\
 	&& [ "$$(echo $$R)" = "14 49152" ]
+
+$.8.build: $.8
+$.8.runtest: $.8.build
+	R=$$(echo -e '""\n"abc"\n"aaa\\"aaa"\n"\\x27"' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "12 19" ]
+
+$.9.build: $.9
+$.9.runtest: $.9.build
+	R=$$((echo 'London to Dublin = 464'\
+	&& echo 'London to Belfast = 518'\
+	&& echo 'Dublin to Belfast = 141') | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "605 982" ]
+
+$.10.build: $.10
+$.10.runtest: $.10.build
+	R=$$(echo 22 | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "2 2" ]
+	R=$$(echo 1 | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "82350 1166642" ]
+	R=$$(echo 122 | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "82352 1166644" ]
+
+$.11.build: $.11
+$.11.runtest: $.11.build
+	R=$$(echo abcdefgh | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "abcdffaa abcdffbb" ]
+	R=$$(echo ghijklmn | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "ghjaabcc ghjbbcdd" ]
+
+$.12.build: $.12
+$.12.runtest: $.12.build
+	R=$$(echo '[1,2,3]' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "6 6" ]
+	R=$$(echo '{"a":2,"b":4}' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "6 6" ]
+	R=$$(echo '[[[3]]]' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "3 3" ]
+	R=$$(echo '{"a":{"b":4},"c":-1}' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "3 3" ]
+	R=$$(echo '{"a":[-1,1]}' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "0 0" ]
+	R=$$(echo '[-1,{"a":1}]' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "0 0" ]
+	R=$$(echo '[]' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "0 0" ]
+	R=$$(echo '{}' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "0 0" ]
+	R=$$(echo '[1,{"c":"red","b":2},3]' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "6 4" ]
+	R=$$(echo '{"d":"red","e":[1,2,3,4],"f":5}' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "15 0" ]
+	R=$$(echo '[1,"red",5]' | ./$(@:.runtest=))\
+	&& [ "$$(echo $$R)" = "6 6" ]
+
+$.13.build: $.13
+$.13.runtest: $.13.build
+	R=$$((echo 'Alice would gain 54 happiness units by sitting next to Bob.'\
+	&& echo 'Alice would lose 79 happiness units by sitting next to Carol.'\
+	&& echo 'Alice would lose 2 happiness units by sitting next to David.'\
+	&& echo 'Bob would gain 83 happiness units by sitting next to Alice.'\
+	&& echo 'Bob would lose 7 happiness units by sitting next to Carol.'\
+	&& echo 'Bob would lose 63 happiness units by sitting next to David.'\
+	&& echo 'Carol would lose 62 happiness units by sitting next to Alice.'\
+	&& echo 'Carol would gain 60 happiness units by sitting next to Bob.'\
+	&& echo 'Carol would gain 55 happiness units by sitting next to David.'\
+	&& echo 'David would gain 46 happiness units by sitting next to Alice.'\
+	&& echo 'David would lose 7 happiness units by sitting next to Bob.'\
+	&& echo 'David would gain 41 happiness units by sitting next to Carol.'\
+	) | ./$(@:.runtest=)) && [ "$$(echo $$R)" = "330 286" ]
